@@ -6,6 +6,7 @@ import (
 	"github.com/casbin/casbin/v2/util"
 	_ "github.com/gogf/gf/contrib/drivers/mysql/v2"
 	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/stretchr/testify/assert"
 	"log"
 	"testing"
@@ -105,9 +106,9 @@ func testSaveLoad(t *testing.T, a *Adapter) {
 	testGetPolicy(t, e, [][]string{{"alice", "data1", "read"}, {"bob", "data2", "write"}, {"data2_admin", "data2", "read"}, {"data2_admin", "data2", "write"}})
 }
 
-func initAdapter(t *testing.T, ctx context.Context, driverName string) *Adapter {
+func initAdapter(t *testing.T, ctx context.Context, driverName, prefix string) *Adapter {
 	// Create an adapter
-	a, err := NewAdapter(ctx, driverName)
+	a, err := NewAdapter(ctx, driverName, prefix)
 	if err != nil {
 		panic(err)
 	}
@@ -123,7 +124,8 @@ func initAdapter(t *testing.T, ctx context.Context, driverName string) *Adapter 
 
 func TestNilField(t *testing.T) {
 	ctx := context.Background()
-	a, err := NewAdapter(ctx, gdb.DefaultGroupName)
+	prefix := g.DB(gdb.DefaultGroupName).GetPrefix()
+	a, err := NewAdapter(ctx, gdb.DefaultGroupName, prefix)
 	assert.Nil(t, err)
 
 	e, err := casbin.NewEnforcer("examples/rbac_model.conf", a)
@@ -246,7 +248,8 @@ func testUpdateFilteredPolicies(t *testing.T, a *Adapter) {
 
 func TestAdapters(t *testing.T) {
 	ctx := context.Background()
-	a := initAdapter(t, ctx, gdb.DefaultGroupName)
+	prefix := g.DB(gdb.DefaultGroupName).GetPrefix()
+	a := initAdapter(t, ctx, gdb.DefaultGroupName, prefix)
 	testAutoSave(t, a)
 	testSaveLoad(t, a)
 	testFilteredPolicy(t, a)
@@ -257,7 +260,8 @@ func TestAdapters(t *testing.T) {
 
 func TestAddPolicies(t *testing.T) {
 	ctx := context.Background()
-	a := initAdapter(t, ctx, gdb.DefaultGroupName)
+	prefix := g.DB(gdb.DefaultGroupName).GetPrefix()
+	a := initAdapter(t, ctx, gdb.DefaultGroupName, prefix)
 	e, _ := casbin.NewEnforcer("examples/rbac_model.conf", a)
 	_, err := e.AddPolicies([][]string{
 		{"jack", "data1", "read"},
@@ -283,7 +287,8 @@ func TestAddPolicies(t *testing.T) {
 
 func TestAddPoliciesFullColumn(t *testing.T) {
 	ctx := context.Background()
-	a := initAdapter(t, ctx, gdb.DefaultGroupName)
+	prefix := g.DB(gdb.DefaultGroupName).GetPrefix()
+	a := initAdapter(t, ctx, gdb.DefaultGroupName, prefix)
 	e, _ := casbin.NewEnforcer("examples/rbac_model.conf", a)
 	_, err := e.AddPolicies([][]string{
 		{"jack", "data1", "read", "col3", "col4", "col5", "col6", "col7"},

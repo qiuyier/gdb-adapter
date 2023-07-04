@@ -120,6 +120,7 @@ type Filter struct {
 // Adapter represents the Gorm adapter for policy store.
 type Adapter struct {
 	dbGroupName string
+	prefix      string
 	tableName   string
 	db          gdb.DB
 	ctx         context.Context
@@ -132,10 +133,10 @@ func finalizer(a *Adapter) {
 }
 
 // NewAdapter is the constructor for Adapter.
-func NewAdapter(ctx context.Context, groupName string) (*Adapter, error) {
+func NewAdapter(ctx context.Context, groupName, prefix string) (*Adapter, error) {
 	a := &Adapter{}
 	a.dbGroupName = groupName
-	a.tableName = defaultTableName
+	a.tableName = fmt.Sprintf("%s%s", prefix, defaultTableName)
 	a.ctx = ctx
 	// Open the DB, create it if not existed.
 	err := a.open()
@@ -462,7 +463,7 @@ func (a *Adapter) rawDelete(tx gdb.TX, line CasbinRule) error {
 	if line.V7 != "" {
 		condition["v7"] = line.V7
 	}
-	if _, err := db.Delete(condition); err != nil {
+	if _, err := db.Unscoped().Delete(condition); err != nil {
 		return tx.Rollback()
 	}
 	return tx.Commit()
@@ -549,7 +550,7 @@ func (a *Adapter) UpdateFilteredPolicies(sec string, ptype string, newPolicies [
 			}
 			return nil, err
 		}
-		if _, err = tx.Model(a.tableName).Where(str, args...).Delete([]CasbinRule{}); err != nil {
+		if _, err = tx.Model(a.tableName).Where(str, args...).Unscoped().Delete([]CasbinRule{}); err != nil {
 			err = tx.Rollback()
 			if err != nil {
 				return nil, err
