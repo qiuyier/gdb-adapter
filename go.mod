@@ -1,4 +1,4 @@
-module github.com/jxo-me/gdb-adapter
+module github.com/qiuyier/gdb-adapter
 
 go 1.18
 
