@@ -183,7 +183,7 @@ func (a *Adapter) createTable() error {
 	if exists, _ := a.HasTable(a.tableName); exists {
 		return nil
 	}
-	_, err := a.db.Exec(a.ctx, fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s (`id` bigint unsigned NOT NULL AUTO_INCREMENT,`p_type` VARCHAR(100),`v0` VARCHAR(100),`v1` VARCHAR(100),`v2` VARCHAR(100),`v3` VARCHAR(100),`v4` VARCHAR(100),`v5` VARCHAR(100), `v6` VARCHAR(25), `v7` VARCHAR(25),PRIMARY KEY (`id`),UNIQUE KEY `idx_%s` (`p_type`,`v0`,`v1`,`v2`,`v3`,`v4`,`v5`,`v6`,`v7`))", a.tableName, a.tableName))
+	_, err := a.db.Exec(a.ctx, fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s (`id` bigint unsigned NOT NULL AUTO_INCREMENT,`p_type` VARCHAR(100),`v0` VARCHAR(100),`v1` VARCHAR(100),`v2` VARCHAR(100),`v3` VARCHAR(100),`v4` VARCHAR(100),`v5` VARCHAR(100), `v6` VARCHAR(25), `v7` VARCHAR(25),`created_at` datetime DEFAULT NULL,`updated_at` datetime DEFAULT NULL,PRIMARY KEY (`id`),UNIQUE KEY `idx_%s` (`p_type`,`v0`,`v1`,`v2`,`v3`,`v4`,`v5`,`v6`,`v7`))", a.tableName, a.tableName))
 	return err
 }
 
