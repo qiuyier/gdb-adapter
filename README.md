@@ -5,7 +5,7 @@ Gdb Adapter is the goframe orm adapter for Casbin.
 
 ## Installation
 
-    go get github.com/jxo-me/gdb-adapter
+    go get github.com/qiuyier/gdb-adapter
 
 ## Simple Example
 
@@ -17,7 +17,8 @@ import (
 	"github.com/casbin/casbin/v2"
 	_ "github.com/gogf/gf/contrib/drivers/mysql/v2"
 	"github.com/gogf/gf/v2/database/gdb"
-	gdbadapter "github.com/jxo-me/gdb-adapter"
+	"github.com/gogf/gf/v2/frame/g"
+	gdbadapter "github.com/qiuyier/gdb-adapter"
 )
 
 func main() {
@@ -25,7 +26,8 @@ func main() {
 	// The adapter will use the MySQL database named "casbin".
 	// If it doesn't exist, the adapter will create it automatically.
 	ctx := context.Background()
-	a, _ := gdbadapter.NewAdapter(ctx, gdb.DefaultGroupName) // Your driver and data source.
+	prefix := g.DB(gdb.DefaultGroupName).GetPrefix()
+	a, _ := gdbadapter.NewAdapter(ctx, gdb.DefaultGroupName, prefix) // Your driver and data source.
 	e, _ := casbin.NewEnforcer("examples/rbac_model.conf", a)
 
 	// Load the policy from DB.
