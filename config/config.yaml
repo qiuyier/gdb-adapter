@@ -2,4 +2,5 @@
 database:
   default:
     link:   "mysql:root:123456@tcp(test.com:3306)/casbin"
+    prefix: "test_"
     debug:  true
